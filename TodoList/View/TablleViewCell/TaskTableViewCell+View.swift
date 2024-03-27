@@ -7,6 +7,12 @@
 
 import UIKit
 
+protocol TaskTableViewCellViewDelegate: AnyObject {
+    func textFieldDidChange(for task: Task, text: String)
+    func checkButtonTapped(for task: Task)
+    func textFieldDidEndEditing()
+}
+
 extension TaskTableViewCell {
     
     final class View: UIView {
@@ -15,7 +21,8 @@ extension TaskTableViewCell {
         private lazy var stackView: UIStackView = {
             let stackView = UIStackView(arrangedSubviews: [
                 checkButton,
-                titleLabel
+                texfield,
+                UIView()
             ])
             stackView.spacing = 12
             return stackView
@@ -29,29 +36,57 @@ extension TaskTableViewCell {
             return button
         }()
         
-        private let titleLabel: UILabel = {
-            let label = UILabel()
-            label.numberOfLines = 0
-            return label
+        private lazy var texfield: UITextField = {
+            let textfield = UITextField()
+            textfield.delegate = self
+            return textfield
         }()
         
         // MARK: - Properties
-        private var checkButtonAction: (() -> Void)?
+        weak var delegate: TaskTableViewCellViewDelegate?
+        private var task: Task?
         
         // MARK: - Functions
-        func configure(with task: Task, checkButtonAction: (() -> Void)?) {
+        func configure(with task: Task, delegate: TaskTableViewCellViewDelegate?) {
+            self.task = task
+            self.delegate = delegate
             setupUI()
-            titleLabel.text = task.title
-            checkButton.isSelected = task.isCompleted
-            self.checkButtonAction = checkButtonAction
         }
         
         private func setupUI() {
             fill(with: stackView, edges: .init(top: 8, left: 24, bottom: 8, right: 24))
+            guard let task else { return }
+            texfield.text = task.title
+            checkButton.isSelected = task.isCompleted
         }
         
         @objc private func checkButtonTapped() {
-            checkButtonAction?()
+            guard let task else { return }
+            delegate?.checkButtonTapped(for: task)
         }
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension TaskTableViewCell.View: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard
+            let task,
+            let text = (textField.text as NSString?)?.replacingCharacters(in: range, with: string)
+        else {
+            return false
+        }
+        delegate?.textFieldDidChange(for: task, text: text)
+        return true
+    }
+
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        delegate?.textFieldDidEndEditing()
     }
 }

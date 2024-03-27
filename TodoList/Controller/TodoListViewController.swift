@@ -30,14 +30,17 @@ final class TodoListViewController: UIViewController {
     }()
     
     // MARK: - Properties
+    weak var errorPresenter: ErrorPresenter?
     private var tasks: [Task]
     private var dataSource: UITableViewDiffableDataSource<Section, Task>?
     
     // MARK: - Initialization
     init() {
-        self.tasks = [Task(title: "Task 1", isCompleted: false),
-                      Task(title: "Task 2", isCompleted: true),
-                      Task(title: "Task 3", isCompleted: false)]
+        self.tasks = [
+            Task(title: "Task 1"),
+            Task(title: "Task 2", isCompleted: true),
+            Task(title: "Task 3"),
+        ]
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -58,6 +61,7 @@ private extension TodoListViewController {
     func setupUI() {
         setupConstraints()
         configureNavigationBarTitle()
+        configureAddButton()
         configureDatasource()
         updateDatasource()
     }
@@ -72,28 +76,35 @@ private extension TodoListViewController {
         self.title = title.capitalized
     }
     
+    func configureAddButton() {
+        navigationItem.rightBarButtonItem = .init(
+            barButtonSystemItem: .add,
+            target: self,
+            action: #selector(addButtonAction)
+        )
+    }
+    
+    @objc func addButtonAction() {
+        // navigate to create new task
+    }
+    
     func configureDatasource() {
         dataSource = .init(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, task in
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.ViewIds.taskCell.rawValue,
-                                                           for: indexPath) as? TaskTableViewCell
-            else { return .init() }
-            
-            cell.configure(with: task, 
-                           taskCompletedAction: self?.handleTaskCompletion(for: task))
+            guard
+                let self,
+                let cell = tableView.dequeueReusableCell(withIdentifier: Constants.ViewIds.taskCell.rawValue,
+                                                         for: indexPath) as? TaskTableViewCell
+            else { 
+                return .init()
+            }
+            cell.configure(with: task, delegate: self)
             return cell
         })
+        dataSource?.defaultRowAnimation = .left
         tableView.dataSource = dataSource
     }
     
-    func handleTaskCompletion(for task: Task) -> () -> Void {
-        return { [weak self] in
-            guard let index = self?.tasks.firstIndex(of: task) else { return }
-            self?.tasks[index].isCompleted.toggle()
-            self?.updateDatasource()
-        }
-    }
-    
-    func updateDatasource() {
+    func updateDatasource(animating: Bool = true) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Task>()
         snapshot.appendSections(Section.allCases)
         let todoTasks = tasks.filter { !$0.isCompleted }
@@ -102,14 +113,44 @@ private extension TodoListViewController {
                              toSection: .todo)
         snapshot.appendItems(completedTask,
                              toSection: .completed)
-        dataSource?.defaultRowAnimation = .left
         dataSource?.apply(snapshot,
-                          animatingDifferences: true)
+                          animatingDifferences: animating)
+    }
+    
+    func handleTaskCompletion(for task: Task) {
+        guard let index = tasks.firstIndex(of: task) else {
+            errorPresenter?.presentError()
+            return
+        }
+        tasks[index].isCompleted.toggle()
+        updateDatasource()
+    }
+    
+    func handleEdition(ofTitle title: String, for task: Task) {
+        guard let index = tasks.firstIndex(of: task) else {
+            errorPresenter?.presentError()
+            return
+        }
+        tasks[index].title = title
     }
 }
 
 // MARK: - UITableViewDelegate
 extension TodoListViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, _ in
+            guard let taskToDelete = self?.dataSource?.itemIdentifier(for: indexPath) else {
+                return
+            }
+            self?.tasks.removeAll { $0.id == taskToDelete.id }
+            self?.updateDatasource()
+        }
+        deleteAction.image = UIImage(systemName: "trash.fill")
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        configuration.performsFirstActionWithFullSwipe = true
+        return configuration
+    }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let id = Constants.ViewIds.todoListHeader.rawValue
@@ -127,12 +168,25 @@ extension TodoListViewController: UITableViewDelegate {
             case .todo:
                 let text = Constants.Literals.todo.rawValue
                 header.textLabel?.text = text.uppercased()
-                
             case .completed:
                 let text = Constants.Literals.completed.rawValue
                 header.textLabel?.text = text.uppercased()
         }
-        header.contentView.backgroundColor = .white
         return header
+    }
+}
+
+extension TodoListViewController: TaskTableViewCellViewDelegate {
+    
+    func textFieldDidChange(for task: Task, text: String) {
+        handleEdition(ofTitle: text, for: task)
+    }
+    
+    func checkButtonTapped(for task: Task) {
+        handleTaskCompletion(for: task)
+    }
+    
+    func textFieldDidEndEditing() {
+        updateDatasource(animating: false)
     }
 }

@@ -20,8 +20,8 @@ final class TaskTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with task: Task, taskCompletedAction: (() -> Void)?) {
-        view.configure(with: task, checkButtonAction: taskCompletedAction)
+    func configure(with task: Task, delegate: TaskTableViewCellViewDelegate) {
+        view.configure(with: task, delegate: delegate)
     }
     
     private func setupView() {

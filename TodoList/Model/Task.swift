@@ -15,7 +15,7 @@ struct Task: Hashable {
     init(
         id: UUID = UUID(),
         title: String,
-        isCompleted: Bool
+        isCompleted: Bool = false
     ) {
         self.id = id
         self.title = title
