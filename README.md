@@ -8,6 +8,7 @@ This TodoList App is a simple application designed to help users manage their da
 - MVC Architecture
 - Delegate
 - Singleton
+- Dependency Injection
 ## Features:
 - Add: Users can add new lists and tasks to the list.
 - Edit: Allows users to edit existing lists and tasks.

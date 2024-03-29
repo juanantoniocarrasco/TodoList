@@ -16,11 +16,12 @@
 		98374EFB2BB4A264008782D3 /* ErrorPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98374EFA2BB4A264008782D3 /* ErrorPresenter.swift */; };
 		98374EFF2BB5BD2D008782D3 /* TaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98374EFE2BB5BD2D008782D3 /* TaskViewController.swift */; };
 		98374F022BB5BE15008782D3 /* TodoListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98374F012BB5BE15008782D3 /* TodoListsViewController.swift */; };
-		98374F052BB5BF26008782D3 /* TodoListDatasource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98374F042BB5BF26008782D3 /* TodoListDatasource.swift */; };
 		98374F072BB5C14E008782D3 /* Assembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98374F062BB5C14E008782D3 /* Assembler.swift */; };
 		98374F152BB5D335008782D3 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98374F142BB5D335008782D3 /* PersistenceController.swift */; };
-		98374F182BB5E0F7008782D3 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 98374F162BB5E0F7008782D3 /* Model.xcdatamodeld */; };
+		98374F182BB5E0F7008782D3 /* PersistentContainer.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 98374F162BB5E0F7008782D3 /* PersistentContainer.xcdatamodeld */; };
 		98374F1A2BB5EF30008782D3 /* TodoListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98374F192BB5EF30008782D3 /* TodoListTableViewCell.swift */; };
+		98374F312BB6D5C7008782D3 /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98374F2D2BB6D5C7008782D3 /* Task+CoreDataClass.swift */; };
+		98374F332BB6D5C7008782D3 /* TodoList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98374F2F2BB6D5C7008782D3 /* TodoList+CoreDataClass.swift */; };
 		98AC191E2BB436AB00A652A0 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AC191D2BB436AB00A652A0 /* UIView+Extension.swift */; };
 		98AC19202BB443F200A652A0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AC191F2BB443F200A652A0 /* Constants.swift */; };
 		98AC19232BB44D2600A652A0 /* TaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98AC19222BB44D2600A652A0 /* TaskTableViewCell.swift */; };
@@ -39,11 +40,12 @@
 		98374EFA2BB4A264008782D3 /* ErrorPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorPresenter.swift; sourceTree = "<group>"; };
 		98374EFE2BB5BD2D008782D3 /* TaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewController.swift; sourceTree = "<group>"; };
 		98374F012BB5BE15008782D3 /* TodoListsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListsViewController.swift; sourceTree = "<group>"; };
-		98374F042BB5BF26008782D3 /* TodoListDatasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListDatasource.swift; sourceTree = "<group>"; };
 		98374F062BB5C14E008782D3 /* Assembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assembler.swift; sourceTree = "<group>"; };
 		98374F142BB5D335008782D3 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		98374F172BB5E0F7008782D3 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		98374F192BB5EF30008782D3 /* TodoListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListTableViewCell.swift; sourceTree = "<group>"; };
+		98374F2D2BB6D5C7008782D3 /* Task+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+CoreDataClass.swift"; sourceTree = "<group>"; };
+		98374F2F2BB6D5C7008782D3 /* TodoList+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoList+CoreDataClass.swift"; sourceTree = "<group>"; };
 		98AC191D2BB436AB00A652A0 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		98AC191F2BB443F200A652A0 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		98AC19222BB44D2600A652A0 /* TaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTableViewCell.swift; sourceTree = "<group>"; };
@@ -85,6 +87,7 @@
 				98AC19172BB1D73200A652A0 /* View */,
 				98AC19182BB1D73500A652A0 /* Controller */,
 				98AC19192BB1D74700A652A0 /* SupportingFiles */,
+				98374F162BB5E0F7008782D3 /* PersistentContainer.xcdatamodeld */,
 				981501692BB0164B00CEE698 /* Info.plist */,
 			);
 			path = TodoList;
@@ -112,8 +115,8 @@
 		98374F0F2BB5D2A4008782D3 /* TodoListDetail */ = {
 			isa = PBXGroup;
 			children = (
-				98AC19262BB46DA200A652A0 /* TableViewCell */,
 				9815015C2BB0164A00CEE698 /* TodoListDetailViewController.swift */,
+				98AC19262BB46DA200A652A0 /* TableViewCell */,
 			);
 			path = TodoListDetail;
 			sourceTree = "<group>";
@@ -146,7 +149,8 @@
 		98AC19162BB1D72C00A652A0 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				98374F162BB5E0F7008782D3 /* Model.xcdatamodeld */,
+				98374F2D2BB6D5C7008782D3 /* Task+CoreDataClass.swift */,
+				98374F2F2BB6D5C7008782D3 /* TodoList+CoreDataClass.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -166,7 +170,6 @@
 		98AC19182BB1D73500A652A0 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				98374F042BB5BF26008782D3 /* TodoListDatasource.swift */,
 				98374F142BB5D335008782D3 /* PersistenceController.swift */,
 			);
 			path = Controller;
@@ -270,20 +273,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				98AC19232BB44D2600A652A0 /* TaskTableViewCell.swift in Sources */,
+				98374F312BB6D5C7008782D3 /* Task+CoreDataClass.swift in Sources */,
 				98AC191E2BB436AB00A652A0 /* UIView+Extension.swift in Sources */,
 				9815015D2BB0164A00CEE698 /* TodoListDetailViewController.swift in Sources */,
 				98374F022BB5BE15008782D3 /* TodoListsViewController.swift in Sources */,
 				981501592BB0164A00CEE698 /* AppDelegate.swift in Sources */,
 				98AC19202BB443F200A652A0 /* Constants.swift in Sources */,
-				98374F182BB5E0F7008782D3 /* Model.xcdatamodeld in Sources */,
+				98374F182BB5E0F7008782D3 /* PersistentContainer.xcdatamodeld in Sources */,
 				98374F072BB5C14E008782D3 /* Assembler.swift in Sources */,
 				98374EFB2BB4A264008782D3 /* ErrorPresenter.swift in Sources */,
 				98374F152BB5D335008782D3 /* PersistenceController.swift in Sources */,
 				98374EF92BB4A25B008782D3 /* AlertErrorPresenter.swift in Sources */,
 				98374F1A2BB5EF30008782D3 /* TodoListTableViewCell.swift in Sources */,
-				98374F052BB5BF26008782D3 /* TodoListDatasource.swift in Sources */,
 				9815015B2BB0164A00CEE698 /* SceneDelegate.swift in Sources */,
 				98AC19252BB46D5C00A652A0 /* TaskTableViewCell+View.swift in Sources */,
+				98374F332BB6D5C7008782D3 /* TodoList+CoreDataClass.swift in Sources */,
 				98374EFF2BB5BD2D008782D3 /* TaskViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -499,13 +503,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		98374F162BB5E0F7008782D3 /* Model.xcdatamodeld */ = {
+		98374F162BB5E0F7008782D3 /* PersistentContainer.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
 				98374F172BB5E0F7008782D3 /* Model.xcdatamodel */,
 			);
 			currentVersion = 98374F172BB5E0F7008782D3 /* Model.xcdatamodel */;
-			path = Model.xcdatamodeld;
+			path = PersistentContainer.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

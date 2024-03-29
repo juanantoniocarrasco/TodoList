@@ -9,4 +9,9 @@ import UIKit
 
 final class TodoListTableViewCell: UITableViewCell {
     
+
+    func configure() {
+        selectionStyle = .none
+        accessoryType = .disclosureIndicator
+    }
 }

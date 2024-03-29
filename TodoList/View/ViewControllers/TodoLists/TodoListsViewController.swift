@@ -19,10 +19,9 @@ final class TodoListsViewController: UIViewController {
         return tableView
     }()
     
-    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     private var todoLists: [TodoList] = []
     private var dataSource: UITableViewDiffableDataSource<Int, TodoList>?
-    
+
     // MARK: - Initialization
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -35,25 +34,8 @@ final class TodoListsViewController: UIViewController {
     // MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadData()
         setupUI()
-    }
-    
-    private func loadData() {
-        do {
-            todoLists = try context.fetch(TodoList.fetchRequest())
-        } catch {
-            print("error al load data")
-        }
-    }
-    
-    private func saveData() {
-        do {
-            try context.save()
-            updateDatasource()
-        } catch {
-            print("error al save data")
-        }
+        loadData()
     }
 }
 
@@ -64,7 +46,6 @@ private extension TodoListsViewController {
         configureNavigationBarTitle()
         configureAddButton()
         configureDatasource()
-        updateDatasource()
     }
     
     func setupConstraints() {
@@ -84,17 +65,12 @@ private extension TodoListsViewController {
         )
     }
     
-    @objc func addButtonAction() {
-        let newTodoList = TodoList(context: context)
-        newTodoList.name = "New TodoList"
-        todoLists.append(newTodoList)
-        saveData()
-    }
-    
     func configureDatasource() {
-        dataSource = .init(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, todoList in
-            let cell = tableView.dequeueReusableCell(withIdentifier: Identifier.todoListCell,
-                                                     for: indexPath)
+        dataSource = .init(tableView: tableView, cellProvider: { tableView, indexPath, todoList in
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: Identifier.todoListCell,
+                                                           for: indexPath) as? TodoListTableViewCell
+            else { return .init() }
+            cell.configure()
             cell.textLabel?.text = todoList.name
             return cell
         })
@@ -107,19 +83,74 @@ private extension TodoListsViewController {
         snapshot.appendItems(todoLists)
         dataSource?.apply(snapshot, animatingDifferences: animating)
     }
+    
+    func loadData() {
+        do {
+            let request = TodoList.fetchRequest()
+            todoLists = try PersistenceController.shared.fetch(request)
+            updateDatasource()
+        } catch {
+            print("error al load data")
+        }
+    }
+    
+    func createTodoList(withName name: String) {
+        do {
+            try PersistenceController.shared.createTodoList(withName: name)
+            loadData()
+        } catch {
+            print("error al add object")
+        }
+    }
+    
+    func showNewTodoListAlertController() {
+        let alertController = UIAlertController(
+            title: Literal.newListTitle,
+            message: nil,
+            preferredStyle: .alert
+        )
+        alertController.addTextField { textField in
+            textField.placeholder = Literal.newListPlaceholder
+        }
+        let cancelAction = UIAlertAction(title: Literal.cancel, style: .cancel, handler: nil)
+        let saveAction = UIAlertAction(title: Literal.save, style: .default) { [weak self] _ in
+            guard
+                let textField = alertController.textFields?.first,
+                let newListName = textField.text,
+                !newListName.isEmpty 
+            else {
+                return
+            }
+            self?.createTodoList(withName: newListName)
+        }
+        alertController.addAction(cancelAction)
+        alertController.addAction(saveAction)
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    @objc func addButtonAction() {
+        showNewTodoListAlertController()
+    }
 
 }
 
 // MARK: - UITableViewDelegate
 extension TodoListsViewController: UITableViewDelegate {
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let viewController = TodoListDetailViewController(todoList: todoLists[indexPath.row])
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+    
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, _ in
             guard let self else { return }
-            context.delete(todoLists[indexPath.row])
-            todoLists.remove(at: indexPath.row)
-            saveData()
-            updateDatasource()
+            do {
+                try PersistenceController.shared.delete(todoLists[indexPath.row])
+                loadData()
+            } catch {
+                print("error al delete object")
+            }
         }
         deleteAction.image = UIImage(systemName: "trash.fill")
         return .init(actions: [deleteAction])
